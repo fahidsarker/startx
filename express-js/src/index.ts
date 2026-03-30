@@ -10,6 +10,7 @@ const server = createServer(app);
 import authRoutes from "./routes/auth";
 import userRoutes from "./routes/user";
 import profileRoutes from "./routes/profile";
+import filesRouter from "./routes/files";
 
 import { globalErrorHandler } from "./middleware/global-error-handle";
 import { initWSIO } from "./ws/ws";
@@ -86,10 +87,10 @@ app.post("/log", (req, res) => {
   return res.status(200).send("Loged");
 });
 
+app.use("/api/files", filesRouter);
 app.use("/api/auth", authRoutes);
 app.use("/api/profile", profileRoutes);
 app.use("/api/users", userRoutes);
-
 
 // 404 handler
 app.use("*", (req, res) => {
