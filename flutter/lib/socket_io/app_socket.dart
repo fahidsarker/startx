@@ -7,11 +7,17 @@ class AppSocketEvents {
     this.auth = 'auth',
     this.roomSubscribe = 'room:subscribe',
     this.roomUnsubscribe = 'room:unsubscribe',
+    this.echo = 'echo',
+    this.echoReply = 'echo:reply',
   });
 
   final String auth;
   final String roomSubscribe;
   final String roomUnsubscribe;
+
+  /// Client emits with `{ 'text': String }`; server responds on [echoReply].
+  final String echo;
+  final String echoReply;
 
   String get authSuccess => '$auth:success';
   String get authFailure => '$auth:failure';
@@ -19,6 +25,31 @@ class AppSocketEvents {
   String get roomSubscribeFailure => '$roomSubscribe:failure';
   String get roomUnsubscribeSuccess => '$roomUnsubscribe:success';
   String get roomUnsubscribeFailure => '$roomUnsubscribe:failure';
+}
+
+/// Parsed `echo:reply` payload from `express-js/src/ws/ws.ts` (`handleEcho`).
+class EchoReply {
+  const EchoReply({this.original, this.suffix, this.message, this.error});
+
+  final String? original;
+  final String? suffix;
+  final String? message;
+  final String? error;
+
+  static EchoReply? fromPayload(dynamic data) {
+    if (data is! Map) return null;
+    String? s(dynamic k) {
+      final v = data[k];
+      return v is String ? v : null;
+    }
+
+    return EchoReply(
+      original: s('original'),
+      suffix: s('suffix'),
+      message: s('message'),
+      error: s('error'),
+    );
+  }
 }
 
 typedef AppSocketAck = void Function(String message);
@@ -40,6 +71,11 @@ class AppSocket {
   /// Same payload as server `extractToken` / `handleAuth`.
   void emitAuth(String token) {
     socket.emit(events.auth, {'token': token});
+  }
+
+  /// Demo echo: server returns the same text plus a random suffix (`echo:reply`).
+  void emitEcho(String text) {
+    socket.emit(events.echo, {'text': text});
   }
 
   /// Emits [events.roomSubscribe] with `{ [roomIdField]: roomId }`; listens for one ack.

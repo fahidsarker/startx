@@ -13,7 +13,7 @@ import profileRoutes from "./routes/profile";
 import filesRouter from "./routes/files";
 
 import { globalErrorHandler } from "./middleware/global-error-handle";
-import { initWSIO } from "./ws/ws";
+import { initWSIO } from "./ws";
 import { authService } from "./services/auth";
 
 initWSIO(

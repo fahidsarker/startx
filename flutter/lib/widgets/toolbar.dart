@@ -41,6 +41,12 @@ class Toolbar extends HookConsumerWidget {
         href: '/dashboard',
         onClick: null,
       ),
+      (
+        title: 'Echo',
+        icon: Icon(Icons.compare_arrows),
+        href: '/echo',
+        onClick: null,
+      ),
 
       (title: '_', icon: Icon(Icons.more_horiz), href: null, onClick: null),
 

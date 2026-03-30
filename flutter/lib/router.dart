@@ -5,6 +5,7 @@ import 'package:flutter_app/providers/auth_provider.dart';
 import 'package:flutter_app/screens/auth/login-screen.dart';
 import 'package:flutter_app/screens/auth/registration_screen.dart';
 import 'package:flutter_app/screens/home/dashboard_screen.dart';
+import 'package:flutter_app/screens/home/echo_demo_screen.dart';
 import 'package:flutter_app/screens/home/home_screen.dart';
 import 'package:flutter_app/screens/home/profiles_screen.dart';
 import 'package:flutter_app/screens/init/init-redirect.dart';
@@ -36,7 +37,7 @@ final routerProvider = Provider<GoRouter>((ref) {
     redirect: (context, state) {
       final authRes = ref.read(authProvider);
       if (authRes == null) {
-        if (state.routeIn('/profile', "/dashboard")) {
+        if (state.routeIn('/profile', '/dashboard', '/echo')) {
           return state.redirTo('/login');
         }
       } else if (state.routeIn('/login', '/registration', '/welcome')) {
@@ -55,6 +56,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         routes: [
           GoRoute(path: '/profile', builder: (_, __) => ProfileScreen()),
           GoRoute(path: '/dashboard', builder: (_, __) => DashboardScreen()),
+          GoRoute(path: '/echo', builder: (_, __) => const EchoDemoScreen()),
         ],
       ),
     ],
