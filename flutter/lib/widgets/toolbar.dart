@@ -6,7 +6,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_app/extensions/color.dart';
 import 'package:flutter_app/extensions/context.dart';
 import 'package:flutter_app/providers/auth_provider.dart';
-import 'package:flutter_app/providers/socket_io_provider.dart';
 import 'package:flutter_app/screens/error_screen.dart';
 import 'package:flutter_app/utils/utils.dart';
 
@@ -29,7 +28,6 @@ class Toolbar extends HookConsumerWidget {
     final expanded = useState(false);
     final currentPath = GoRouterState.of(context).fullPath ?? 'xx';
     final themeProvider = context.tp;
-    final isServerConnected = ref.watch(rippleSocketStatusProvider).isConnected;
 
     final auth = ref.watch(authProvider);
     if (auth == null) {

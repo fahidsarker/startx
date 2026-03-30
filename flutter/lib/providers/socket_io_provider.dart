@@ -1,7 +1,6 @@
 import 'package:flutter_app/core/constants.dart';
-import 'package:flutter_app/providers/api_provider.dart';
 import 'package:flutter_app/providers/auth_provider.dart';
-import 'package:flutter_app/socket_io/ripple_socket.dart';
+import 'package:flutter_app/socket_io/app_socket.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 part 'socket_io_provider.g.dart';
@@ -19,12 +18,22 @@ class WSConnectStatus {
   }
 }
 
+const _kWsEvents = AppSocketEvents();
+
 @riverpod
 class SocketIoInit extends _$SocketIoInit {
   late final Socket socket;
   @override
   WSConnectStatus build(String wsUrl, String token) {
     socket = io(wsUrl);
+
+    socket.on(_kWsEvents.authSuccess, (_) {
+      state = state.copyWith(isAuthenticated: true);
+    });
+    socket.on(_kWsEvents.authFailure, (_) {
+      state = state.copyWith(isAuthenticated: false);
+    });
+
     socket.onConnect((_) => _onConnect());
     socket.onReconnect((_) => _onConnect());
     socket.onDisconnect((_) => _onDisconnect());
@@ -39,19 +48,8 @@ class SocketIoInit extends _$SocketIoInit {
   }
 
   void _onConnect() {
-    // print(
-    //   '>>>>> CONNECTED:: ${socket.id}, with URL: ${wsUrl}, token: ${token}',
-    // );
     state = state.copyWith(isConnected: true);
-    socket.emit('auth', {'token': token});
-
-    socket.on('auth:success', (_) {
-      state = state.copyWith(isAuthenticated: true);
-    });
-
-    socket.on('auth:failure', (_) {
-      state = state.copyWith(isAuthenticated: false);
-    });
+    socket.emit(_kWsEvents.auth, {'token': token});
   }
 
   void _onDisconnect() {
@@ -61,7 +59,7 @@ class SocketIoInit extends _$SocketIoInit {
 }
 
 @riverpod
-WSConnectStatus rippleSocketStatus(Ref ref) {
+WSConnectStatus appSocketStatus(Ref ref) {
   final auth = ref.watch(authProvider);
   if (auth == null) {
     return WSConnectStatus(isConnected: false, isAuthenticated: false);
@@ -70,21 +68,21 @@ WSConnectStatus rippleSocketStatus(Ref ref) {
 }
 
 @riverpod
-AppSocket? rippleSocket(Ref ref) {
+AppSocket? appSocket(Ref ref) {
   final auth = ref.watch(authProvider);
   if (auth == null) {
     return null;
   }
-  final status = ref.watch(rippleSocketStatusProvider);
+  final status = ref.watch(appSocketStatusProvider);
   if (!status.isConnected || !status.isAuthenticated) {
     return null;
   }
   final socket = ref
       .watch(socketIoInitProvider(API_URL, auth.token).notifier)
       .socket;
-  final rippleSoc = AppSocket(socket);
+  final client = AppSocket(socket, events: _kWsEvents);
   ref.onDispose(() {
-    rippleSoc.dispose();
+    client.dispose();
   });
-  return rippleSoc;
+  return client;
 }

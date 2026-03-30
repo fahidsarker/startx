@@ -5,6 +5,7 @@ Small, copy-paste-friendly project starters.
 ## Templates
 
 - **[Express.js + TypeScript API](express-js/readme.md)** — Express, Drizzle (PostgreSQL), JWT auth, Socket.IO, and file upload helpers. Use **Bun** for install and scripts (see that readme).
+- **[Flutter client](flutter/readme.md)** — Riverpod, go_router, Dio, Socket.IO client aligned with the Express API; optional pairing with **express-js** for a full-stack starter.
 
 ## Download templates
 
