@@ -1,0 +1,33 @@
+---
+description: Flutter starter — Riverpod, routing, API, and Socket.IO alignment with express-js
+alwaysApply: true
+---
+
+# Flutter app starter
+
+## Purpose
+
+Starter aligned with the **express-js** template: auth, REST, and **Socket.IO**. Prefer matching API contracts and event names when changing either side.
+
+## Stack
+
+- **Dart SDK**: as in `pubspec.yaml` (e.g. ^3.9).
+- **State**: Riverpod (`hooks_riverpod`, `flutter_riverpod`) with `riverpod_annotation` where providers are annotated; run code generation after changing annotated providers: `dart run build_runner build --delete-conflicting-outputs`.
+- **Routing**: `go_router` via `lib/router.dart` and `routerProvider`.
+- **HTTP**: Dio (see API-related providers).
+- **Realtime**: `socket_io_client` — socket lifecycle lives under `lib/socket_io/`; keep connection logic there rather than in widgets.
+- **Legacy coexistence**: `provider` + `ChangeNotifier` still used for theme (`ThemeProvider`); new features should default to Riverpod unless extending that path.
+
+## Layout
+
+- `lib/screens/` — feature screens (e.g. `auth/`, `home/`).
+- `lib/widgets/` — shared UI.
+- `lib/providers/` — Riverpod providers (`*.g.dart` generated — do not hand-edit).
+- `lib/core/` — theme, URL strategy, shared app infrastructure.
+- `lib/models/` — data types.
+- **Package import**: `package:flutter_app/...` for lib code.
+
+## Conventions
+
+- Follow `analysis_options.yaml` / `flutter_lints`; run `flutter analyze` before large changes.
+- Use `const` constructors where possible; prefer `ConsumerWidget` / `HookConsumerWidget` for Riverpod UI.

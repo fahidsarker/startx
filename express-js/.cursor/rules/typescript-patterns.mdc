@@ -1,0 +1,12 @@
+---
+description: TypeScript patterns for this Express API
+globs: "**/*.ts"
+alwaysApply: false
+---
+
+# TypeScript in this repo
+
+- Use explicit types for public route handlers and WS event payloads; reuse types from `src/ws/types.ts` and related modules when applicable.
+- Avoid `any`; use `unknown` and narrow, or Zod-inferred types.
+- Keep side effects (DB, IO) in services or dedicated modules, not scattered in route files beyond orchestration.
+- Match existing import style (default vs named) in the file you edit.

@@ -1,0 +1,26 @@
+---
+description: Express + TypeScript starter — stack, layout, and conventions
+alwaysApply: true
+---
+
+# Express JS starter
+
+## Stack
+
+- **Runtime**: Bun (`bun run src/index.ts`, `bun --watch` for dev). TypeScript compiles with `tsc` for compatibility; primary workflow is Bun.
+- **API**: Express, **Zod** for env and request validation, **Drizzle** + PostgreSQL, **JWT** via `authService`, **Socket.IO** under `src/ws/`.
+
+## Layout
+
+- `src/routes/` — HTTP routes; keep handlers thin; validate input with Zod.
+- `src/middleware/` — cross-cutting concerns (e.g. errors).
+- `src/services/` — business logic (auth, etc.).
+- `src/ws/` — Socket.IO setup (`init`, connection, auth, rooms, events, payload types). Extend here instead of bloating `index.ts`.
+- `src/env.ts` — all environment variables; extend the Zod schema when adding config.
+- DB schema/migrations — follow existing Drizzle kit layout in the repo.
+
+## Conventions
+
+- Prefer `import z from "zod"` and explicit schemas for bodies/query params where routes accept data.
+- Use `globalErrorHandler` (or existing patterns) for consistent API errors.
+- CORS/Socket.IO origins are permissive in the template; tighten for production when touching that code.

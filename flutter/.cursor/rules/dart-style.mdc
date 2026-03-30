@@ -1,0 +1,12 @@
+---
+description: Dart/Flutter file conventions for lib and test
+globs: "**/*.dart"
+alwaysApply: false
+---
+
+# Dart in this repo
+
+- Match surrounding style: trailing commas, existing naming (`snake_case` files, `lowerCamelCase` members).
+- Prefer immutable models and clear `Result`/error handling where the codebase already uses `resultx` or similar patterns.
+- For new screens: wire routes in `router.dart` and keep navigation declarative with `go_router`.
+- Do not edit `*.g.dart` files; change the source `*.dart` and re-run `build_runner`.
