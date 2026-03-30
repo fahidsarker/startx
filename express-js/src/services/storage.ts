@@ -20,10 +20,11 @@ const dirFromPaths = (...paths: string[]) => {
 const buckets = {
   profilePhotos: (p: { userId: string }) =>
     dirFromPaths(uploadBasePath, "profile_photos", p.userId),
-  messageAttachments: (p: { chatId: string }) =>
-    dirFromPaths(uploadBasePath, "message_attachments", p.chatId),
-  chatAttachments: (p: { chatId: string }) =>
-    dirFromPaths(uploadBasePath, "chat_attachments", p.chatId),
+  /** Thread or message attachments under a parent resource (e.g. conversation id). */
+  messageAttachments: (p: { resourceId: string }) =>
+    dirFromPaths(uploadBasePath, "message_attachments", p.resourceId),
+  resourceAttachments: (p: { resourceId: string }) =>
+    dirFromPaths(uploadBasePath, "resource_attachments", p.resourceId),
 };
 
 const uploadStorageFromReq = (req: Request) => {
@@ -31,15 +32,15 @@ const uploadStorageFromReq = (req: Request) => {
   const path = req.originalUrl;
   if (path.startsWith("/api/profile")) {
     return buckets.profilePhotos({ userId });
-  } else if (path.startsWith("/api/chat/")) {
-    const cid = req.params.cid;
-    if (!cid) {
-      throw new Error("Chat ID not found in request parameters");
+  } else if (path.startsWith("/api/uploads/resource/")) {
+    const resourceId = req.params.resourceId;
+    if (!resourceId) {
+      throw new Error("Resource ID not found in request parameters");
     }
     if (path.includes("/messages")) {
-      return buckets.messageAttachments({ chatId: cid });
+      return buckets.messageAttachments({ resourceId });
     }
-    return buckets.chatAttachments({ chatId: cid });
+    return buckets.resourceAttachments({ resourceId });
   } else {
     throw apiError(400, "Invalid upload path");
   }

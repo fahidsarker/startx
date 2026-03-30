@@ -38,7 +38,7 @@ router.get(
       });
       return Res.json({ users: allUsers });
     } catch (error) {
-      console.error("Get chats error:", error);
+      console.error("List users error:", error);
       return Res.error("Internal server error");
     }
   })
